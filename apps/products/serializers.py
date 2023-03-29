@@ -3,8 +3,9 @@ from rest_framework import serializers
 
 
 class ProductSerializer(serializers.ModelSerializer):
-    category = serializers.CharField(source="category.name")
+    category = serializers.StringRelatedField()
     detail_url = serializers.SerializerMethodField()
+    
     class Meta:
         model = Product
         fields = '__all__'

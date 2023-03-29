@@ -16,11 +16,11 @@ class OrderView(generics.ListCreateAPIView):
         return Order.objects.filter(user=self.request.user)
 
     def perform_create(self, serializer):
-        cart = Cart.objects.get(user=self.request.user)
+        cart = Cart.objects.get_or_create(user=self.request.user)
         serializer.save(user=self.request.user, total_price=cart.total_price())
 
     def post(self, request):
-        cart = Cart.objects.get(user=request.user)
+        cart = Cart.objects.get_or_create(user=request.user)
         order_serializer = self.serializer_class(data=request.data)
         if order_serializer.is_valid():
             # Create the order

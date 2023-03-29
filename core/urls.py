@@ -24,11 +24,11 @@ schema_view = get_schema_view(
 urlpatterns = [
     path("admin/", admin.site.urls),
     path('api-view/', include("rest_framework.urls")),
-    path("users/", include("apps.users.urls")),
-    path("products/", include("apps.products.urls")),
-    path("orders/", include("apps.orders.urls")),
-    path("carts/", include("apps.carts.urls")),
-    path("categories/", include("apps.categories.urls")),
+    path("api/users/", include("apps.users.urls")),
+    path("api/products/", include("apps.products.urls")),
+    path("api/orders/", include("apps.orders.urls")),
+    path("api/carts/", include("apps.carts.urls")),
+    path("api/categories/", include("apps.categories.urls")),
 
     # Drf-yasg open api
     path("", schema_view.with_ui("swagger", cache_timeout=0), name="schema-swagger-ui"),

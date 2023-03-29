@@ -20,32 +20,9 @@ class RegisterUserApiView(generics.CreateAPIView):
     permission_classes = [permissions.AllowAny]
 
     def post(self, request, *args, **kwargs):
-        payload = request.data.copy()
-        email = payload.get("email", None)
-        username = payload.get("username", None)
-        birth_date = payload.get("birth_date", None)
-
-        if CustomUser.objects.filter(email=email).exists():
-            raise serializers.ValidationError(
-                "This email already exist in our database."
-            )
-
-        if CustomUser.objects.filter(username=username).exists():
-            raise serializers.ValidationError(
-                "This username already exist in our database."
-            )
-
-        age = custom_validator.verify_date_of_birth(value=birth_date)
-
-        if age < 18:
-            raise ValidationError(
-                f"you are {age} years of age. you must be 18 \
-                years of age and above to own an account."
-            )
-
-        serializer = self.serializer_class(data=payload)
+        serializer = self.serializer_class(data=request.data)
         serializer.is_valid(raise_exception=True)
-        serializer.save(role="Customer", age=age)
+        serializer.save(role="Customer")
         return Response(serializer.data, status=status.HTTP_201_CREATED)
 
 

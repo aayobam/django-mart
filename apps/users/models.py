@@ -4,7 +4,14 @@ from apps.common import choice_helper
 from apps.common.models import TimeStampedModel
 from apps.users.managers import CustomUserManager
 from django.contrib.auth.models import AbstractUser
+from django.core.exceptions import ValidationError
 
+def validated_phone_no(value):
+    if len(value) < 11 or len(value) > 11:
+        raise ValidationError('phone number cannot be higher or less than 11')
+    if type(value) != int:
+        raise ValidationError('phone number should be whole number')
+    
 
 class CustomUser(AbstractUser, TimeStampedModel):
     first_name = models.CharField(max_length=100)
@@ -12,7 +19,7 @@ class CustomUser(AbstractUser, TimeStampedModel):
     email = models.EmailField(max_length=100, unique=True)
     gender = models.CharField(default="male", choices=choice_helper.GENDER_CHOICES, max_length=10)
     role = models.CharField(default="admin", choices=choice_helper.ROLE_CHOICES, max_length=50)
-    phone_no = models.CharField(max_length=11)
+    phone_no = models.CharField(max_length=11, validators=[validated_phone_no])
     address = models.CharField(max_length=255)
     city = models.CharField(max_length=50)
     state = models.CharField(max_length=50)

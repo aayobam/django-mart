@@ -1,7 +1,9 @@
 from .models import Product
 from rest_framework import generics
 from .serializers import ProductSerializer
-from rest_framework import filters
+from rest_framework.filters import SearchFilter
+from apps.common.custom_filter import ProductFilter
+from django_filters.rest_framework import DjangoFilterBackend
 from rest_framework.permissions import IsAuthenticated, IsAdminUser
 from apps.common.custom_pagination import StandardResultsSetPagination
 
@@ -21,9 +23,11 @@ class ProductListView(generics.ListAPIView):
     """
     queryset = Product.objects.all()
     serializer_class = ProductSerializer
-    search_fields = ["name", "category__name"]
-    filter_backends = [filters.SearchFilter]
+    filter_backends = [DjangoFilterBackend, SearchFilter]
+    filterset_class = ProductFilter
     pagination_class = StandardResultsSetPagination
+    search_fields = ['category__name', 'name']
+    
 
     
 class ProductDetailView(generics.RetrieveAPIView):

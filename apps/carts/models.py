@@ -9,8 +9,12 @@ class Cart(TimeStampedModel):
     products = models.ManyToManyField(Product, through='CartItem')
 
     def __str__(self):
-        return f'Cart for ' + self.user.email
+        return f'Cart ' + self.id + ' for ' + self.user.email
     
+    @property
+    def cart_total_price(self):
+        pass
+
 
 class CartItem(TimeStampedModel):
     cart = models.ForeignKey(Cart, on_delete=models.CASCADE)
@@ -19,3 +23,9 @@ class CartItem(TimeStampedModel):
 
     def __str__(self):
         return f'{self.product.name} ({self.quantity})'
+    
+    @property
+    def item_total_price(self):
+        pass
+
+    

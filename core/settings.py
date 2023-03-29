@@ -1,4 +1,5 @@
 import os
+import socket
 import environ
 from django.utils.timezone import timedelta
 from pathlib import Path
@@ -41,8 +42,8 @@ LOCAL_APPS = [  # local apps
 THIRD_PARTY_APPS = [  # third party apps
     "drf_yasg",
     "corsheaders",
-    "debug_toolbar",
     "rest_framework",
+    "django_filters",
     "django_celery_beat",
     "rest_framework_simplejwt",
 ]
@@ -121,6 +122,10 @@ MIDDLEWARE = [
     "django.contrib.auth.middleware.AuthenticationMiddleware",
     "django.contrib.messages.middleware.MessageMiddleware",
     "django.middleware.clickjacking.XFrameOptionsMiddleware",
+]
+
+INTERNAL_IPS = [
+    "127.0.0.1",
 ]
 
 ROOT_URLCONF = "core.urls"

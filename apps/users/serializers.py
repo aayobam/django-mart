@@ -9,22 +9,32 @@ class UserSerializer(serializers.ModelSerializer):
     detail_url = serializers.SerializerMethodField()
     email = serializers.EmailField()
     password = serializers.CharField(max_length=120, min_length=8, write_only=True, help_text='must not be less than 8', style={'input_type': 'password'}, required=True)
+    confirm_password = serializers.CharField(max_length=120, min_length=8, write_only=True, help_text='must match password', style={'input_type': 'password'}, required=True)
 
     class Meta:
         model = CustomUser
-        fields = ['id', 'email', 'password', 'first_name','last_name', 'phone_no', 'detail_url']
+        fields = ['first_name','last_name', 'phone_no', 'email', 'password', 'confirm_password', 'detail_url']
 
     def get_detail_url(self, obj):
         return obj.get_absolute_url()
 
     def create(self, validated_data):
         email = validated_data.get('email')
+        password = validated_data.get('password')
         if CustomUser.objects.filter(email=email).exists():
-            raise ValidationError("User with this email already exists.")
+            raise ValidationError(
+                "This email already exist in our database."
+            )
         user = CustomUser.objects.create_user(**validated_data)
+        user.set_password(password)
         user.is_active = True
         user.save()
         return user
+    
+    def validate(self, attrs):
+        if attrs.get("password") != attrs.get("confirm_password"):
+            raise ValidationError("Passwords do not match.")
+        return attrs
     
     def update(self, instance, validated_data):
         password = validated_data.pop('password', None)
