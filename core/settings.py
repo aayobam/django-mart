@@ -1,5 +1,4 @@
 import os
-import socket
 import environ
 from django.utils.timezone import timedelta
 from pathlib import Path
@@ -16,7 +15,7 @@ SECRET_KEY = env("SECRET_KEY")
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = ['*']
+ALLOWED_HOSTS = ["*"]
 
 
 # Application definition
@@ -30,16 +29,21 @@ INSTALLED_APPS = [
     "django.contrib.staticfiles",
 ]
 
-LOCAL_APPS = [  # local apps
-    "apps.users",
-    "apps.carts",
-    "apps.orders",
-    "apps.products",
-    "apps.shippings",
-    "apps.categories",
+LOCAL_APPS = [
+    # Local apps
+    "api.users",
+    "api.carts",
+    "api.orders",
+    "api.coupons",
+    "api.reviews",
+    "api.products",
+    "api.addresses",
+    "api.wishlists",
+    "api.categories",
 ]
 
-THIRD_PARTY_APPS = [  # third party apps
+THIRD_PARTY_APPS = [
+    # Third party apps
     "drf_yasg",
     "corsheaders",
     "rest_framework",

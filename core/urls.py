@@ -7,7 +7,6 @@ from drf_yasg.views import get_schema_view
 from rest_framework import permissions
 
 
-
 schema_view = get_schema_view(
     openapi.Info(
         title="Django Mart E Commerce Store",
@@ -23,12 +22,16 @@ schema_view = get_schema_view(
 )
 urlpatterns = [
     path("admin/", admin.site.urls),
-    path('api-view/', include("rest_framework.urls")),
-    path("api/users/", include("apps.users.urls")),
-    path("api/products/", include("apps.products.urls")),
-    path("api/orders/", include("apps.orders.urls")),
-    path("api/carts/", include("apps.carts.urls")),
-    path("api/categories/", include("apps.categories.urls")),
+    path("api-view/", include("rest_framework.urls")),
+    path("api/users/", include("api.users.urls")),
+    path("api/categories/", include("api.categories.urls")),
+    path("api/products/", include("api.products.urls")),
+    path("api/carts/", include("api.carts.urls")),
+    path("api/orders/", include("api.orders.urls")),
+    path("api/reviews/", include("api.reviews.urls")),
+    path("api/coupons/", include("api.coupons.urls")),
+    path("api/wishlists/", include("api.wishlists.urls")),
+    path("api/shipping/", include('api.addresses.urls')),
 
     # Drf-yasg open api
     path("", schema_view.with_ui("swagger", cache_timeout=0), name="schema-swagger-ui"),
@@ -37,5 +40,5 @@ urlpatterns = [
 ]
 urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
 
-admin.site.site_title = "Swift Bank Admin"
-admin.site.site_header = "Swift Bank Administrator"
+admin.site.site_title = "Django Mart Admin"
+admin.site.site_header = "Django Mart Administrator"
