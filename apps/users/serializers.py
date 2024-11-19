@@ -57,14 +57,9 @@ class UserSerializer(serializers.ModelSerializer):
         return attrs
 
     def update(self, instance, validated_data):
-        password = validated_data.pop("password", None)
         for key, value in validated_data.items():
             setattr(key, value, instance)
-
-        if password is None:
-            instance.set_password(password)
-        instance.save()
-        return instance
+        return super().update(instance, validated_data)
 
 
 class EmailTokenObtainSerializer(TokenObtainSerializer):

@@ -16,6 +16,7 @@ class CartItemSerializer(serializers.ModelSerializer):
     sub_total = serializers.SerializerMethodField(method_name="get_sub_total")
 
     class Meta:
+        model = CartItem
         fields = ['id', 'cart', 'products', 'quantity', 'sub_total']
 
     def total(self, cartitem:CartItem):

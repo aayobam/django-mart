@@ -32,6 +32,7 @@ INSTALLED_APPS = [
 LOCAL_APPS = [
     "apps.users",
     "apps.carts",
+    "apps.drivers",
     "apps.orders",
     "apps.vendors",
     "apps.coupons",
@@ -39,14 +40,16 @@ LOCAL_APPS = [
     "apps.products",
     "apps.addresses",
     "apps.wishlists",
+    "apps.logistics",
     "apps.categories",
 ]
 
 THIRD_PARTY_APPS = [
-    "drf_yasg",
     "corsheaders",
     "rest_framework",
     "django_filters",
+    'drf_spectacular',
+    'drf_spectacular_sidecar',
     "rest_framework_simplejwt",
 ]
 
@@ -54,15 +57,21 @@ INSTALLED_APPS += LOCAL_APPS + THIRD_PARTY_APPS
 
 # Rest Configuration
 REST_FRAMEWORK = {
+    'DEFAULT_SCHEMA_CLASS': 'drf_spectacular.openapi.AutoSchema',
     "DEFAULT_AUTHENTICATION_CLASSES": [
         "rest_framework_simplejwt.authentication.JWTAuthentication",
         "rest_framework.authentication.SessionAuthentication",
     ],
+    'DEFAULT_FILTER_BACKENDS': ['django_filters.rest_framework.DjangoFilterBackend'],
     "DEFAULT_PERMISSION_CLASSES": [
         "rest_framework.permissions.IsAuthenticated",
     ],
+    "DEFAULT_RENDERER_CLASSES": [
+        "rest_framework.renderers.JSONRenderer",
+        "rest_framework.renderers.BrowsableAPIRenderer",
+    ],
     "DEFAULT_PAGINATION_CLASS": "rest_framework.pagination.PageNumberPagination",
-    "PAGE_SIZE": 12,
+    "PAGE_SIZE": 15,
 }
 
 SIMPLE_JWT = {
@@ -70,16 +79,59 @@ SIMPLE_JWT = {
     "REFRESH_TOKEN_LIFETIME": timedelta(days=90),
 }
 
-SWAGGER_SETTINGS = {
-    "USE_SESSION_AUTH": False,
-    "SECURITY_DEFINITIONS": {
-        "Authorization Token e.g [Bearer (JWT) ]": {
-            "type": "apiKey",
-            "name": "Authorization",
-            "in": "header",
-        },
+SPECTACULAR_SETTINGS = {
+    "SCHEMA_PATH_PREFIX": "/api/",
+    "DEFAULT_GENERATOR_CLASS": "drf_spectacular.generators.SchemaGenerator",
+    "SERVE_PERMISSIONS": ["rest_framework.permissions.AllowAny"],
+    "COMPONENT_SPLIT_PATCH": True,
+    "COMPONENT_SPLIT_REQUEST": True,
+    "SWAGGER_UI_SETTINGS": {
+        "deepLinking": True,
+        "persistAuthorization": True,
+        "displayOperationId": True,
+        "displayRequestDuration": True,
     },
+    # available SwaggerUI versions: https://github.com/swagger-api/swagger-ui/releases
+    'SWAGGER_UI_DIST': 'SIDECAR',
+    'SWAGGER_UI_FAVICON_HREF': 'SIDECAR',
+    'REDOC_DIST': 'SIDECAR',
+    "UPLOADED_FILES_USE_URL": True,
+    "TITLE": "Django Mart Ecommerce API",
+    "DESCRIPTION": "Django Mart Ecommerce API Documentation",
+    "VERSION": "1.0.0",
+    "LICENCE": {"name": "BSD License"},
+    "CONTACT": {"name": "Abayomi Olowu", "email": "aayobam@gmail.com"},
+    # Oauth2 related settings. used for example by django-oauth2-toolkit.
+    # https://github.com/OAI/OpenAPI-Specification/blob/master/versions/3.0.3.md#oauth-flows-object
+    "OAUTH2_FLOWS": [],
+    "OAUTH2_AUTHORIZATION_URL": None,
+    "OAUTH2_TOKEN_URL": None,
+    "OAUTH2_REFRESH_URL": None,
+    "OAUTH2_SCOPES": None,
 }
+
+CSP_DEFAULT_SRC = ("'self'", "'unsafe-inline'")
+CSP_WORKER_SRC = ("'self'", "blob:")
+CSP_IMG_SRC = ("'self'", "data:", "cdn.redoc.ly")
+CSP_STYLE_SRC = ("'self'", "'unsafe-inline'", "fonts.googleapis.com")
+CSP_FONT_SRC = ("'self'", "fonts.gstatic.com")
+
+CORS_ALLOW_ALL_ORIGINS = True
+
+CORS_ALLOW_METHODS = [
+    "DELETE",
+    "GET",
+    "OPTIONS",
+    "PATCH",
+    "POST",
+    "PUT",
+]
+
+ALLOWED_HOSTS = ['127.0.0.1', 'localhost']
+USE_X_FORWARDED_HOST = True
+SECURE_PROXY_SSL_HEADER = ["HTTP_X_FORWARDED_PROTO", "https"]
+CORS_ALLOW_ALL_ORIGINS = True
+CSRF_TRUSTED_ORIGINS = []
 
 CORS_ALLOW_ALL_ORIGINS = True
 
@@ -93,8 +145,8 @@ CORS_ALLOW_METHODS = [
 ]
 
 MIDDLEWARE = [
-    "corsheaders.middleware.CorsMiddleware",
     "django.middleware.security.SecurityMiddleware",
+    'corsheaders.middleware.CorsMiddleware', # third party middleware
     "django.contrib.sessions.middleware.SessionMiddleware",
     "django.middleware.common.CommonMiddleware",
     "django.middleware.csrf.CsrfViewMiddleware",

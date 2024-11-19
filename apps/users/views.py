@@ -1,4 +1,4 @@
-from rest_framework import generics, permissions, status, viewsets
+from rest_framework import permissions, status, viewsets
 from rest_framework.response import Response
 from rest_framework_simplejwt.views import TokenObtainPairView
 from apps.users.models import CustomUser
@@ -6,7 +6,7 @@ from apps.users.serializers import CustomTokenObtainPairSerializer, UserSerializ
 from rest_framework.decorators import action
 
 
-class UserViewset(viewsets.GenericViewSet, generics.ListAPIView):
+class UserViewset(viewsets.GenericViewSet):
     queryset = CustomUser.objects.all()
     serializer_class = UserSerializer
     permission_classes = [permissions.AllowAny]
@@ -19,12 +19,6 @@ class UserViewset(viewsets.GenericViewSet, generics.ListAPIView):
             serializer = self.get_serializer(page, many=True)
             return self.get_paginated_response(serializer.data)
         return Response(serializer.data, status=status.HTTP_200_OK)
-    
-    def get_serializer_class(self):
-        return super().get_serializer_class()
-    
-    def get_permissions(self):
-        return super().get_permissions()
 
     @action(detail=False, methods=["post"], url_path="register-user")
     def register_user(self, request, *args, **kwargs):
@@ -61,14 +55,8 @@ class UserViewset(viewsets.GenericViewSet, generics.ListAPIView):
 
 
 class CustomTokenObtainPairView(TokenObtainPairView):
-    """
-    Authenticates user to generate and get access token
-    that can be use to grant users access using simplejwt.
-    """
-
     def post(self, request, *args, **kwargs):
         payload = request.data
         serializer = CustomTokenObtainPairSerializer(data=payload)
         serializer.is_valid(raise_exception=True)
-        response_data = serializer.validated_data
-        return Response(response_data, status=status.HTTP_201_CREATED)
+        return Response(serializer.validated_data, status=status.HTTP_201_CREATED)
